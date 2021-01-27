@@ -26,6 +26,8 @@ services:
     - SMTP_SSL
     - SMTP_USERNAME
     - SMTP_PASSWORD
+    - YUBICO_CLIENT_ID
+    - YUBICO_SECRET_KEY
     
 
   proxy:
@@ -123,21 +125,18 @@ services:
              crond -d 8 &&
              bash /block.sh start'    
 
-
-  watchtower:
-    # Watchtower will pull down your new image, gracefully shut down your existing container 
-    # and restart it with the same options that were used when it was deployed initially
-    # https://github.com/containrrr/watchtower
-    image: containrrr/watchtower
+  bitwarden_backup:
     restart: always
-    container_name: watchtower
+    container_name: bitwarden_backup
+    build: https://github.com/antipasta/bitwarden_rs-backup.git
     volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
+    - ${PWD}/bitwarden:/data
+    - ${PWD}/backups/:/backups
     environment:
-    - WATCHTOWER_CLEANUP=true
-    - WATCHTOWER_SCHEDULE
-    - TZ
-
+    - UID=0
+    - BACKUP_FILE=/backups/backup.sqlite3
+    - TIMESTAMP=true
+    - 'CRON_TIME=11 * * * *'
 
 volumes:
   caddycerts:
