@@ -128,7 +128,7 @@ services:
   bitwarden_backup:
     restart: always
     container_name: bitwarden_backup
-    build: https://github.com/antipasta/bitwarden_rs-backup.git
+    image: ghcr.io/antipasta/bitwarden_rs-backup/bitwarden_backup:latest
     volumes:
     - ${PWD}/bitwarden:/data
     - ${PWD}/backups/:/backups
@@ -136,7 +136,7 @@ services:
     - UID=0
     - BACKUP_FILE=/backups/backup.sqlite3
     - TIMESTAMP=true
-    - 'CRON_TIME=11 * * * *'
+    - 'CRON_TIME=0 3 * * *'
 
 volumes:
   caddycerts:
